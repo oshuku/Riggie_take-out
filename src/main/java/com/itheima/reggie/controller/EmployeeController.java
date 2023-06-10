@@ -1,5 +1,7 @@
 package com.itheima.reggie.controller;
 
+import java.time.LocalDateTime;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,8 +87,30 @@ public class EmployeeController {
 		return R.success("退出成功");
 	}
 	
-	
-	
+	/**
+	 * 新增员工
+	 * @param employee
+	 * @return
+	 */
+	@PostMapping
+	public R<String> save(HttpServletRequest request, @RequestBody Employee employee){
+		log.info("新增员工，员工信息：{}", employee.toString());
+		
+		//设置初始密码123456，需要md5加密处理
+		employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+		
+		//设置创建时间和更新时间
+		employee.setCreateTime(LocalDateTime.now());
+		employee.setUpdateTime(LocalDateTime.now());
+		
+		//设置创建人和更新人
+		Long empID = (Long) request.getSession().getAttribute("employee");
+		employee.setCreateUser(empID);
+		employee.setUpdateUser(empID);
+		
+		employeeService.save(employee);
+		return R.success("新增员工成功");
+	}
 	
 	
 	
