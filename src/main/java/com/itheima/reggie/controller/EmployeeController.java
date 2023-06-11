@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -137,8 +138,21 @@ public class EmployeeController {
 		return R.success(pageInfo);
 	}
 	
-	
-	
+	/**
+	 * 更新员工信息
+	 * @param request
+	 * @param employee
+	 * @return
+	 */
+	@PutMapping
+	public R<String> update(HttpServletRequest request,@RequestBody Employee employee){
+		log.info(employee.toString());
+		Long empID = (Long) request.getSession().getAttribute("employee");
+		employee.setUpdateTime(LocalDateTime.now());
+		employee.setUpdateUser(empID);
+		employeeService.updateById(employee);
+		return R.success("更新信息成功");
+	}
 	
 	
 	
