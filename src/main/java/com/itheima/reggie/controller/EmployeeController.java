@@ -1,13 +1,12 @@
 package com.itheima.reggie.controller;
 
-import java.time.LocalDateTime;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -104,13 +103,13 @@ public class EmployeeController {
 		employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
 		
 		//设置创建时间和更新时间
-		employee.setCreateTime(LocalDateTime.now());
-		employee.setUpdateTime(LocalDateTime.now());
+		//employee.setCreateTime(LocalDateTime.now());
+		//employee.setUpdateTime(LocalDateTime.now());
 		
 		//设置创建人和更新人
-		Long empID = (Long) request.getSession().getAttribute("employee");
-		employee.setCreateUser(empID);
-		employee.setUpdateUser(empID);
+		//Long empID = (Long) request.getSession().getAttribute("employee");
+		//employee.setCreateUser(empID);
+		//employee.setUpdateUser(empID);
 		
 		employeeService.save(employee);
 		return R.success("新增员工成功");
@@ -148,12 +147,23 @@ public class EmployeeController {
 	public R<String> update(HttpServletRequest request,@RequestBody Employee employee){
 		log.info(employee.toString());
 		Long empID = (Long) request.getSession().getAttribute("employee");
-		employee.setUpdateTime(LocalDateTime.now());
-		employee.setUpdateUser(empID);
+		
+		//employee.setUpdateTime(LocalDateTime.now());
+		//employee.setUpdateUser(empID);
+		
 		employeeService.updateById(employee);
 		return R.success("更新信息成功");
 	}
 	
+	
+	@GetMapping("/{id}")
+	public R<Employee> getById(@PathVariable Long id){
+		Employee employee = employeeService.getById(id);
+		if(employee != null) {
+			return R.success(employee);
+		}
+		return R.error("信息查询失败");
+	}
 	
 	
 	
