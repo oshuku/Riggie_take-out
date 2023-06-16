@@ -16,6 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GlobalExceptionHandler {
 	
+	/**
+	 * 对新增员工username重复时异常的处理
+	 * @param ex
+	 * @return
+	 */
 	@ExceptionHandler(SQLIntegrityConstraintViolationException.class)
 	public R<String> exceptionHandler(SQLIntegrityConstraintViolationException ex){
 		log.info(ex.getMessage());
@@ -30,5 +35,17 @@ public class GlobalExceptionHandler {
 		
 		
 		return R.error("未知错误");
+	}
+	
+	/**
+	 * 对删除分类已关联菜品、套餐时异常处理
+	 * @param ex
+	 * @return
+	 */
+	@ExceptionHandler(CustomException.class)
+	public R<String> exceptionHandler(CustomException ex){
+		log.info(ex.getMessage());
+		
+		return R.error(ex.getMessage());
 	}
 }
