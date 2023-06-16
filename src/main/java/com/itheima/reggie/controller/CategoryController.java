@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +28,18 @@ import lombok.extern.slf4j.Slf4j;
 public class CategoryController {
 	@Autowired
 	private CategoryService categoryService;
+	
+	/**
+	 * 修改分类信息
+	 * @param category
+	 * @return
+	 */
+	@PutMapping
+	public R<String> update(@RequestBody Category category){
+		log.info("修改分类信息：{}", category);
+		categoryService.updateById(category);
+		return R.success("修改完成");
+	}
 	
 	@DeleteMapping
 	public R<String> delete(Long ids){
