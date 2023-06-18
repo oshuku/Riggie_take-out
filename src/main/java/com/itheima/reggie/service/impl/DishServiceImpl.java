@@ -2,10 +2,12 @@ package com.itheima.reggie.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.reggie.dto.DishDto;
 import com.itheima.reggie.entity.Dish;
@@ -19,6 +21,32 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 	
 	@Autowired
 	private DishFlavorService dishFlavorService;
+	
+	
+	
+	/**
+	 * 根据id查询菜品信息和对应的口味信息
+	 */
+	public DishDto getWithFlavorById(Long id) {
+		
+		// 查询菜品基本信息，从地dish查询
+		Dish dish = this.getById(id);
+		
+		// 查询当前菜品对应的口味信息，从dish_flavor查询
+		LambdaQueryWrapper<DishFlavor> dishFlavorQueryWrapper = new LambdaQueryWrapper<>();
+		dishFlavorQueryWrapper.eq(id != null, DishFlavor::getDishId, id);
+		List<DishFlavor> flavors = dishFlavorService.list(dishFlavorQueryWrapper);
+		
+		// 拷贝
+		DishDto dishDto = new DishDto();
+		BeanUtils.copyProperties(dish, dishDto);
+		dishDto.setFlavors(flavors);
+		
+		return dishDto;
+	}
+
+
+
 
 	/**
 	 * 新增菜品，同时保存口味。操作两张表
@@ -44,5 +72,51 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 		dishFlavorService.saveBatch(flavors);
 	}
 
+
+
+	/**
+	 * 更新菜品信息和口味信息
+	 */
+	@Transactional
+	public void updateWithFlavor(DishDto dishDto) {
+		// 根据id更新菜品信息到dish表
+		this.updateById(dishDto);
+		
+		
+		// 清理当前菜品对应口味数据---dish_flavor表的delete操作
+		LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(DishFlavor::getDishId, dishDto.getId());
+		dishFlavorService.remove(queryWrapper);
+		
+		// 添加当前提交过来的口味数据---dish_flavor表的insert操作
+		Long dishId = dishDto.getId();
+		List<DishFlavor> flavors = dishDto.getFlavors();
+		for(int i = 0 ; i < flavors.size(); i++) {
+			flavors.get(i).setDishId(dishId);
+		}
+		
+		// 保存菜品口味数据到菜品口味表dish_flavor
+		dishFlavorService.saveBatch(flavors);
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }

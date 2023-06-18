@@ -6,7 +6,9 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +34,54 @@ public class DishController {
 	
 	@Autowired
 	private CategoryService categoryService;
+	
+	/**
+	 * 更新菜品状态
+	 * @param status
+	 * @param id
+	 * @return
+	 */
+	@PostMapping("/status/{status}")
+	public R<String> updateStatus(@PathVariable int status,Long... ids){
+		log.info("status:{},id:{}",status,ids);
+		
+		List<Dish> dishList = new ArrayList<>();
+		for(long id : ids) {
+			Dish dish = new Dish();
+			dish.setStatus(status);
+			dish.setId(id);
+			dishList.add(dish);
+		}
+		
+		
+		dishService.updateBatchById(dishList);
+		
+		return R.success("更新状态成功");
+	}
+	
+	
+	
+	/**
+	 * 更新菜品信息
+	 * @param dishDto
+	 * @return
+	 */
+	@PutMapping
+	public R<String> update(@RequestBody DishDto dishDto){
+		dishService.updateWithFlavor(dishDto);
+		return R.success("更新菜品信息成功");
+	}
+	
+	/**
+	 * 根据id查询菜品信息和对应的口味信息
+	 * @param id
+	 * @return
+	 */
+	@GetMapping("/{id}")
+	public R<DishDto> getById(@PathVariable Long id){
+		DishDto dishDto = dishService.getWithFlavorById(id);
+		return R.success(dishDto);
+	}
 	
 	/**
 	 * 分页展示菜品
