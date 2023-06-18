@@ -1,5 +1,7 @@
 package com.itheima.reggie.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,26 @@ import lombok.extern.slf4j.Slf4j;
 public class CategoryController {
 	@Autowired
 	private CategoryService categoryService;
+	
+	
+	/**
+	 * 新增菜品页面，下拉框展示口味
+	 * @param type
+	 * @return
+	 */
+	@GetMapping("/list")
+	public R<List<Category>> list(Category category){
+		
+		LambdaQueryWrapper<Category> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+		lambdaQueryWrapper.eq(category.getType() != null, Category::getType, category.getType());
+		
+		//添加排序条件
+		lambdaQueryWrapper.orderByAsc(Category::getSort).orderByDesc(Category::getUpdateTime);
+		
+		List<Category> list = categoryService.list(lambdaQueryWrapper);
+		
+		return R.success(list);
+	}
 	
 	/**
 	 * 修改分类信息
