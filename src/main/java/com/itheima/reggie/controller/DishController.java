@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +35,20 @@ public class DishController {
 	
 	@Autowired
 	private CategoryService categoryService;
+	
+	
+	/**
+	 * 删除菜品
+	 * @param ids
+	 * @return
+	 */
+	@DeleteMapping
+	public R<String> delete(Long...ids ){
+		
+		dishService.deleteByIdWithFlavor(ids);
+		
+		return R.success("删除菜品成功");
+	}
 	
 	/**
 	 * 更新菜品状态

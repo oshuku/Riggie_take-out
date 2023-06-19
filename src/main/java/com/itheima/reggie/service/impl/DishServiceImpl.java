@@ -1,6 +1,8 @@
 package com.itheima.reggie.service.impl;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +99,30 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 		
 		// 保存菜品口味数据到菜品口味表dish_flavor
 		dishFlavorService.saveBatch(flavors);
+	}
+
+
+
+	/**
+	 * 删除菜品信息和口味信息
+	 */
+	@Transactional
+	public void deleteByIdWithFlavor(Long... ids) {
+		
+		// 将ids数组转换为list
+		List<Long> myList = Arrays.stream(ids).collect(Collectors.toList());
+		
+		// 删除菜品信息
+		this.removeByIds(myList);
+		// 删除口味信息
+		// 创建条件构造器
+		LambdaQueryWrapper<DishFlavor> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+		lambdaQueryWrapper.in(DishFlavor::getDishId, myList);
+
+
+		// 执行删除操作
+		dishFlavorService.remove(lambdaQueryWrapper);
+		
 	}
 
 	

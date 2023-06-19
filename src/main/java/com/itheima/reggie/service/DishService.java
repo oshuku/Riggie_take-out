@@ -24,4 +24,10 @@ public interface DishService extends IService<Dish>{
 	 * @param dishDto
 	 */
 	public void updateWithFlavor(DishDto dishDto);
+	
+	/**
+	 * 删除菜品信息及对应口味
+	 * @param ids
+	 */
+	public void deleteByIdWithFlavor(Long... ids);
 }

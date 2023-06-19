@@ -1,12 +1,13 @@
 package com.itheima.reggie.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+
+import lombok.Data;
 
 /**
 菜品口味
@@ -48,6 +49,7 @@ public class DishFlavor implements Serializable {
 
 
     //是否删除
+    @TableLogic(value="0",delval="1")
     private Integer isDeleted;
 
 }
