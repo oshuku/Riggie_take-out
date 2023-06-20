@@ -36,6 +36,24 @@ public class DishController {
 	@Autowired
 	private CategoryService categoryService;
 	
+	/**
+     * 根据条件查询对应的菜品数据
+     * @param dish
+     * @return
+     */
+	@GetMapping("/list")
+	public R<List<Dish>> list(Dish dish){
+		log.info("dish = {}",dish);
+		
+		LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+		
+		lambdaQueryWrapper.eq(dish != null, Dish::getCategoryId, dish.getCategoryId());
+		lambdaQueryWrapper.eq(Dish::getStatus, 1);
+		
+		List<Dish> list = dishService.list(lambdaQueryWrapper);
+		return R.success(list);
+	}
+	
 	
 	/**
 	 * 删除菜品
