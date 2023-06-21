@@ -5,12 +5,14 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -36,23 +38,34 @@ public class SetmealController {
 	private CategoryService categoryService;
 	
 	/**
+	 * 删除套餐
+	 * @param ids
+	 * @return
+	 */
+	@DeleteMapping
+	public R<String> delete(@RequestParam List<Long> ids){
+		setmealService.deleteWithDish(ids);
+		return R.success("删除套餐信息成功");
+	}
+	
+	/**
 	 * 套餐停售/起售
 	 * @param status
 	 * @param ids
 	 * @return
 	 */
 	@PostMapping("/status/{status}")
-	public R<String> updateStatus(@PathVariable int status, Long... ids){
-		List<Setmeal> list = new ArrayList<>();
-		for(Long id : ids) {
-			Setmeal setmeal = new Setmeal();
-			setmeal.setId(id);
-			setmeal.setStatus(status);
-			list.add(setmeal);
-		}
+	public R<String> updateStatus(@PathVariable Integer status, @RequestParam List<Long> ids){
 		
-		setmealService.updateBatchById(list);
-		return R.success("修改状态成功");
+		LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.in(ids != null, Setmeal::getId, ids);
+		List<Setmeal> list = setmealService.list(queryWrapper);
+		
+		for(Setmeal setmeal : list) {
+			setmeal.setStatus(status);
+			setmealService.updateById(setmeal);
+		}
+		return R.success("售卖状态更新成功");
 	}
 	/**
 	 * 修改套餐信息

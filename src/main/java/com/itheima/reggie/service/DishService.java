@@ -1,5 +1,7 @@
 package com.itheima.reggie.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.itheima.reggie.dto.DishDto;
 import com.itheima.reggie.entity.Dish;
@@ -29,5 +31,5 @@ public interface DishService extends IService<Dish>{
 	 * 删除菜品信息及对应口味
 	 * @param ids
 	 */
-	public void deleteByIdWithFlavor(Long... ids);
+	public void deleteByIdWithFlavor(List<Long> ids);
 }

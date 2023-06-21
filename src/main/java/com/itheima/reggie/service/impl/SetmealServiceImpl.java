@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.itheima.reggie.common.CustomException;
 import com.itheima.reggie.dto.SetmealDto;
 import com.itheima.reggie.entity.Setmeal;
 import com.itheima.reggie.entity.SetmealDish;
@@ -21,6 +22,34 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
 
 	@Autowired
 	private SetmealDishService setmealDishService;
+	
+	/**
+	 * 删除套餐及套餐菜品对应关系
+	 * @param ids
+	 */
+	@Transactional
+	public void deleteWithDish(List<Long> ids) {
+		
+		// select count(*) from setmeal where id in {ids} and status = 1;
+		// 判断要删除的套餐里有没有正在起售的
+		LambdaQueryWrapper<Setmeal> setmealQueryWrapper = new LambdaQueryWrapper<>();
+		setmealQueryWrapper.in(Setmeal::getId,ids);
+		setmealQueryWrapper.eq(Setmeal::getStatus, 1);
+		int count = this.count(setmealQueryWrapper);
+		
+		// 如果有正在起售的,抛出异常
+		if (count > 0) {
+			throw new CustomException("当前套餐起售中,无法删除");
+		}
+		
+		// 如果可以,进行删除--setmeal
+		this.removeByIds(ids);
+		
+		// 删除setmeal_dish中的关系数据
+		LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.in(SetmealDish::getSetmealId, ids);
+		setmealDishService.remove(queryWrapper);
+	}
 	/**
 	 * 新增套餐信息及对应菜品
 	 */

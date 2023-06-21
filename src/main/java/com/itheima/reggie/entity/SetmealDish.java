@@ -1,11 +1,14 @@
 package com.itheima.reggie.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+
+import lombok.Data;
 
 /**
  * 套餐菜品关系
@@ -57,5 +60,6 @@ public class SetmealDish implements Serializable {
 
 
     //是否删除
+    @TableLogic(value = "0",delval = "1")
     private Integer isDeleted;
 }

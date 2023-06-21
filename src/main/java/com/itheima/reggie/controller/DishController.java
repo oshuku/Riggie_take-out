@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -61,7 +62,7 @@ public class DishController {
 	 * @return
 	 */
 	@DeleteMapping
-	public R<String> delete(Long...ids ){
+	public R<String> delete(@RequestParam List<Long> ids ){
 		
 		dishService.deleteByIdWithFlavor(ids);
 		
@@ -69,27 +70,32 @@ public class DishController {
 	}
 	
 	/**
-	 * 更新菜品状态
+	 * 菜品停售/起售
 	 * @param status
 	 * @param id
 	 * @return
 	 */
 	@PostMapping("/status/{status}")
-	public R<String> updateStatus(@PathVariable int status,Long... ids){
+	public R<String> updateStatus(@PathVariable Integer status,@RequestParam List<Long> ids){
 		log.info("status:{},id:{}",status,ids);
 		
-		List<Dish> dishList = new ArrayList<>();
-		for(long id : ids) {
-			Dish dish = new Dish();
+		// 创建条件构造器
+		LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+		
+		// 添加条件
+		queryWrapper.in(ids != null, Dish::getId, ids);
+		// 查询
+		List<Dish> list = dishService.list(queryWrapper);
+		
+		// 遍历集合
+		for(Dish dish : list) {
+			// 修改状态
 			dish.setStatus(status);
-			dish.setId(id);
-			dishList.add(dish);
+			// 更新
+			dishService.updateById(dish);
 		}
 		
-		
-		dishService.updateBatchById(dishList);
-		
-		return R.success("更新状态成功");
+		return R.success("售卖状态更新状态成功");
 	}
 	
 	
