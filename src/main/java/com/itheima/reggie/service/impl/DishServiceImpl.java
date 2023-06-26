@@ -1,6 +1,7 @@
 package com.itheima.reggie.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,11 +66,19 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 		Long dishId = dishDto.getId();
 		
 		// 利用循环，为list表里的每个口味设置上菜品Id
-		for(int i = 0; i < flavors.size(); i++) {
+		/*for(int i = 0; i < flavors.size(); i++) {
 			flavors.get(i).setDishId(dishId);;
-		}
+		}*/
+		
+		// 使用Lambda
+		flavors.stream().map((item) -> {
+			item.setDishId(dishId);
+			return item;
+		}).collect(Collectors.toList());
+		
 		
 		// 保存菜品口味数据到菜品口味表dish_flavor
+		
 		dishFlavorService.saveBatch(flavors);
 	}
 
@@ -92,9 +101,14 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 		// 添加当前提交过来的口味数据---dish_flavor表的insert操作
 		Long dishId = dishDto.getId();
 		List<DishFlavor> flavors = dishDto.getFlavors();
-		for(int i = 0 ; i < flavors.size(); i++) {
+		/*for(int i = 0 ; i < flavors.size(); i++) {
 			flavors.get(i).setDishId(dishId);
-		}
+		}*/
+		
+		flavors.stream().map((item) -> {
+			item.setDishId(dishId);
+			return item;
+		}).collect(Collectors.toList());
 		
 		// 保存菜品口味数据到菜品口味表dish_flavor
 		dishFlavorService.saveBatch(flavors);

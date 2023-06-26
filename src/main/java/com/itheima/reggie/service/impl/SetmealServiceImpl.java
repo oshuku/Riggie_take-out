@@ -1,6 +1,7 @@
 package com.itheima.reggie.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,9 +63,14 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
 		List<SetmealDish> setmealDishes = setmealDto.getSetmealDishes();
 		// 设置套餐id
 		Long setmealId = setmealDto.getId();
-		for(int i = 0; i < setmealDishes.size() ; i++) {
+		/*for(int i = 0; i < setmealDishes.size() ; i++) {
 			setmealDishes.get(i).setSetmealId(setmealId);
-		}
+		}*/
+		
+		setmealDishes.stream().map((setmealDish) -> {
+			setmealDish.setSetmealId(setmealId);
+			return setmealDish;
+		}).collect(Collectors.toList());
 		
 		// 保存
 		setmealDishService.saveBatch(setmealDishes);
@@ -112,9 +118,15 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
 		// 设置setmeal_id
 		List<SetmealDish> dishes = setmealDto.getSetmealDishes();
 		Long setmealId = setmealDto.getId();
-		for(int i = 0; i < dishes.size() ; i++) {
+		/*for(int i = 0; i < dishes.size() ; i++) {
 			dishes.get(i).setSetmealId(setmealId);
-		}
+		}*/
+		
+		
+		dishes.stream().map((setmealDish) -> {
+			setmealDish.setSetmealId(setmealId);
+			return setmealDish;
+		}).collect(Collectors.toList());
 		
 		// 保存到setmeal_dish表
 		setmealDishService.saveBatch(dishes);
