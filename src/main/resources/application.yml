@@ -9,6 +9,17 @@ spring:
       url: jdbc:mysql://localhost:3306/reggie?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: root
       password: 123
+      
+  # 邮箱配置
+  mail:
+    host: smtp.qq.com  # 发送邮件的服务器地址
+    username: zhuwang.lyg@qq.com # 开启 IMAP/SMTP服务 的qq邮箱的账号
+    password: bpcatuiaolcbfebg  # 开启 IMAP/SMTP服务 获得的授权码,而不是qq邮箱的登录密码
+    default-encoding: UTF-8   
+   
+  
+
+   
 mybatis-plus:
   configuration:
     #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射
@@ -21,3 +32,5 @@ mybatis-plus:
 #自定义瑞吉外卖菜品图片转存位置      
 reggie:
   path: C:\myData\test\imgs\
+  
+
