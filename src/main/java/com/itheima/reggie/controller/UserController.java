@@ -94,7 +94,7 @@ public class UserController {
 			String context = "欢迎使用瑞吉餐购，登录验证码为: " + code + ",五分钟内有效，请妥善保管!";
 
 			// 发送验证码
-			userService.sendMsg(phone, subject, context);
+			// userService.sendMsg(phone, subject, context);
 
 			// 在session中保存phone-code
 			session.setAttribute(phone, code);
