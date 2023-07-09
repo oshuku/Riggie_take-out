@@ -10,6 +10,13 @@ spring:
       username: root
       password: 123
       
+  # redis配置    
+  redis:
+    host: 192.168.190.129
+    port: 6379
+    password: root
+    database: 0 # redis默认提供了16个数据库，默认使用0号数据库
+      
   # 邮箱配置
   mail:
     host: smtp.qq.com  # 发送邮件的服务器地址
